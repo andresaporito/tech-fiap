@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tech.Infra.Context;
 
@@ -10,9 +11,11 @@ using Tech.Infra.Context;
 namespace Tech.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250528214041_SeedUser")]
+    partial class SeedUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -82,7 +85,7 @@ namespace Tech.Infra.Migrations
                             Id = 2,
                             Email = "joao@tech.com",
                             Name = "joao",
-                            Password = "123",
+                            Password = "abc123",
                             Permission = 2
                         });
                 });

@@ -17,18 +17,28 @@ namespace Tech.Infra.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            // Seed de usuário administrador
-            modelBuilder.Entity<Users>().HasData(new Users(
-
-                name: "admin",
-                password: "123",
-                email: "admin@tech.com",
-                permission: TypePermissionEnum.Admin
-            )
-            {
-                Id = 1
-            });
+            modelBuilder.Entity<Users>().HasData(
+                new Users(
+                    name: "admin",
+                    password: "123",
+                    email: "admin@tech.com",
+                    permission: TypePermissionEnum.Admin
+                )
+                {
+                    Id = 1
+                },
+                new Users(
+                    name: "joao",
+                    password: "123",
+                    email: "joao@tech.com",
+                    permission: TypePermissionEnum.User
+                )
+                {
+                    Id = 2
+                }
+            );
         }
+
     }
 
 

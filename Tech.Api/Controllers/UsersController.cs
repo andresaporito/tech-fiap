@@ -11,40 +11,41 @@ namespace Tech.Api.Controllers
     [Route("api/[controller]")]
     public class UsersController(IUsersService usersService, ITokenService tokenService) : Controller
     {
+        private readonly IUsersService _usersService = usersService;
         private readonly ITokenService _tokenService = tokenService;
 
-        private readonly IUsersService _usersService = usersService;
         /// <summary>
-        /// Required token
+        /// Get all users (Admin only)
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of users</returns>
         /// <response code="200">Success</response>
-        /// <response code="400">Not Authorize</response>
-        /// <response code="500">Erro</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="500">Internal error</response>
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = nameof(TypePermissionEnum.Admin))]
         public async Task<IActionResult> GetAll()
         {
-            var find = await _usersService.GetAll();
-            var current = User;
-            return Ok(find);
+            var users = await _usersService.GetAll();
+            return Ok(users);
         }
 
         /// <summary>   
-        /// Add new user
+        /// Add a new user (Admin only)
         /// </summary>
-        /// <remarks>Ex: de requisicao. 
+        /// <remarks>Example: 
         /// {
-        ///     Name: "ex",
-        ///     Pass: "123",
-        ///     TypePermission: 1
+        ///     "name": "admin",
+        ///     "password": "123456",
+        ///     "email": "admin@tech.com",
+        ///     "permission": 1
         /// }
         /// </remarks>
-        /// <returns></returns>
-        /// <param name="request">object user</param>
+        /// <param name="request">New user data</param>
+        /// <returns>User created</returns>
         /// <response code="201">Created</response>
-        /// <response code="400">Not Authorize</response>
-        /// <response code="500">Error</response>
+        /// <response code="400">Validation error</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="500">Internal error</response>
         [HttpPost]
         [Authorize(Roles = nameof(TypePermissionEnum.Admin))]
         public async Task<IActionResult> AddUser([FromBody] NewUsersRequest request)
@@ -53,56 +54,60 @@ namespace Tech.Api.Controllers
                 return BadRequest(ModelState);
 
             var response = await _usersService.AddUsers(request);
-
             return Created("", response);
         }
+
         /// <summary>
-        /// Update exists user
+        /// Update an existing user (Admin only)
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Created</response>
-        /// <response code="404">Not Authorize</response>
-        /// <response code="500">Error</response>
+        /// <param name="request">Updated user data</param>
+        /// <param name="id">User ID</param>
+        /// <returns>User updated</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">User not found</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="500">Internal error</response>
         [HttpPut("{id}")]
         [Authorize(Roles = nameof(TypePermissionEnum.Admin))]
         public async Task<IActionResult> UpdateUser([FromBody] UsersRequest request, [FromRoute] int id)
         {
             var find = await _usersService.GetId(id);
-
             if (find == null)
                 return NotFound();
 
             await _usersService.UpdateUsers(request, id);
-
             return Ok(find);
         }
+
         /// <summary>
-        /// Delete user
+        /// Delete a user by ID (Admin only)
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Created</response>
-        /// <response code="404">Not Authorize</response>
-        /// <response code="500">Error</response>
+        /// <param name="id">User ID</param>
+        /// <returns>User deleted</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">User not found</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="500">Internal error</response>
         [HttpDelete("{id}")]
         [Authorize(Roles = nameof(TypePermissionEnum.Admin))]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             var find = await _usersService.GetId(id);
-
             if (find == null)
                 return NotFound();
 
             await _usersService.Delete(id);
-
             return Ok(find);
         }
+
         /// <summary>
-        /// get token from user 
+        /// Get JWT token for user login
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Created</response>
-        /// <response code="401">Not Authorize</response>
-        /// <response code="500">Error</response>
+        /// <param name="user">User credentials</param>
+        /// <returns>JWT token</returns>
+        /// <response code="200">Token created</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal error</response>
         [HttpGet("token")]
         [AllowAnonymous]
         public async Task<IActionResult> GetTokenUser([FromQuery] TokenRequest user)
@@ -114,7 +119,5 @@ namespace Tech.Api.Controllers
 
             return Ok(token);
         }
-
-
     }
 }

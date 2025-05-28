@@ -10,8 +10,11 @@ using Tech.Domain.Requests;
 
 namespace Tech.Services.Services
 {
-    public class TokenService(IConfiguration configuration, IUsersRepository usersRepository, IMemoryCache memoryCache) : ITokenService
-
+    public class TokenService(
+        IConfiguration configuration,
+        IUsersRepository usersRepository,
+        IMemoryCache memoryCache
+    ) : ITokenService
     {
         private readonly IConfiguration _configuration = configuration;
         private readonly IUsersRepository _usersRepository = usersRepository;
@@ -21,63 +24,50 @@ namespace Tech.Services.Services
         {
             var findUser = await _usersRepository.GetName(user.Name);
 
-            if (findUser == null)
-                return string.Empty;
-
-            if (!(findUser.Name == user.Name && findUser.Password == user.Password))
+            if (findUser == null || findUser.Password != user.Password)
                 return string.Empty;
 
             var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["SecretJwt"]);
 
-            var chave = Encoding.ASCII.GetBytes(_configuration.GetSection("SecretJwt").Value);
-
-            var tokenProp = new SecurityTokenDescriptor()
+            var claims = new[]
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, findUser.Name),
-                    new Claim(ClaimTypes.Role, findUser.Permission.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddHours(8),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(chave),
-                    SecurityAlgorithms.HmacSha256Signature)
+                new Claim(ClaimTypes.Name, findUser.Name),
+                new Claim(ClaimTypes.Role, findUser.Permission.ToString())
             };
 
-            var token = tokenHandler.CreateToken(tokenProp);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(8),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature
+                )
+            };
 
+            var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-
-
         }
 
         public async Task<string> ValidateInCacheToken(TokenRequest user)
         {
-            var token = string.Empty;
+            var cacheKey = $"Token_{user.Name}";
 
-            try
-            {
-                MemoryCacheEntryOptions op = new()
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(8)
-                };
-
-                _memoryCache.TryGetValue($"Token_{user.Name}", out token);
-
-                if (string.IsNullOrEmpty(token))
-                {
-                    token = await GetToken(user);
-                    _memoryCache.Set($"Token_{user.Name}", token, op);
-                }
-
+            if (_memoryCache.TryGetValue(cacheKey, out string token) && !string.IsNullOrEmpty(token))
                 return token;
 
+            token = await GetToken(user);
 
-            }
-            catch (Exception e)
+            if (string.IsNullOrEmpty(token))
+                throw new UnauthorizedAccessException("Invalid credentials");
+
+            _memoryCache.Set(cacheKey, token, new MemoryCacheEntryOptions
             {
-                throw;
-            }
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(8)
+            });
+
+            return token;
         }
     }
 }
