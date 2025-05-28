@@ -119,5 +119,11 @@ namespace Tech.Api.Controllers
 
             return Ok(token);
         }
+        [HttpGet("test-error")]
+        [AllowAnonymous]
+        public IActionResult ThrowError()
+        {
+            throw new Exception("Erro de teste para verificar o middleware.");
+        }
     }
 }
