@@ -1,0 +1,21 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/TechChallange.Grupo99/FileContentIndex
+/.vs/TechChallange.Grupo99/DesignTimeBuild
+/.vs/TechChallange.Grupo99/v16
+/.vs/TechChallange.Grupo99/v17
+/Tech.Api/bin/Debug/net8.0
+/Tech.Api/obj
+/Tech.Domain/obj
+/Tech.Infra/obj
+/Tech.Tests/obj
+/Tech.Tests/bin/Debug/net8.0
+/Tech.Services/bin/Debug/net8.0
+/Tech.Services/obj/Debug/net8.0
+/Tech.Services/obj
+/Tech.Infra/bin/Debug/net8.0
+/Tech.Domain/bin/Debug/net8.0
+/.vs/ProjectEvaluation
+/.vs/Fiap.Tech.Fase1
