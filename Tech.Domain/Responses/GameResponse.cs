@@ -1,4 +1,6 @@
-﻿namespace Tech.Domain.Responses
+﻿using Tech.Domain.Entities;
+
+namespace Tech.Domain.Responses
 {
     public class GameResponse
     {
@@ -8,7 +10,7 @@
         public string Platform { get; set; } = string.Empty;
         public string ReleaseDate { get; set; } = string.Empty;
 
-        public static GameResponse FromEntity(Entities.Game game)
+        public static GameResponse FromEntity(Game game)
         {
             return new GameResponse
             {
