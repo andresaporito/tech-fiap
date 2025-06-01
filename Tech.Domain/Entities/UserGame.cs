@@ -1,14 +1,22 @@
 ﻿namespace Tech.Domain.Entities
 {
-    public class UserGame
+    public sealed class UserGame
     {
-        public int UserId { get; set; }
-        public Users User { get; set; }
+        public int UserId { get; private set; }
+        public Users User { get; private set; }
 
-        public int GameId { get; set; }
-        public Game Game { get; set; }
+        public int GameId { get; private set; }
+        public Game Game { get; private set; }
 
-        public DateTime AcquisitionDate { get; set; } = DateTime.UtcNow;
+        public DateTime AcquisitionDate { get; private set; } = DateTime.UtcNow;
+
+        public UserGame(int userId, int gameId)
+        {
+            UserId = userId;
+            GameId = gameId;
+            AcquisitionDate = DateTime.UtcNow;
+        }
+
+        private UserGame() { }
     }
-
 }

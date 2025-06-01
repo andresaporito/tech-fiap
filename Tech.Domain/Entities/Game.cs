@@ -2,10 +2,10 @@
 {
     public sealed class Game : EntityBase
     {
-        public string Nome { get; private set; }
-        public string Categoria { get; private set; }
-        public string Plataforma { get; private set; }
-        public DateTime DataLancamento { get; private set; }
+        public string Name { get; private set; }
+        public string Category { get; private set; }
+        public string Platform { get; private set; }
+        public DateTime ReleaseDate { get; private set; }
 
         public ICollection<UserGame> UserGames { get; set; } = new List<UserGame>();
 
@@ -13,20 +13,20 @@
         {
         }
 
-        public Game(string nome, string categoria, string plataforma, DateTime dataLancamento)
+        public Game(string name, string category, string platform, DateTime releaseDate)
         {
-            Nome = nome;
-            Categoria = categoria;
-            Plataforma = plataforma;
-            DataLancamento = dataLancamento;
+            Name = name;
+            Category = category;
+            Platform = platform;
+            ReleaseDate = releaseDate;
         }
 
-        public void Alterar(string nome, string categoria, string plataforma, DateTime dataLancamento)
+        public void Update(string name, string category, string platform, DateTime releaseDate)
         {
-            Nome = nome;
-            Categoria = categoria;
-            Plataforma = plataforma;
-            DataLancamento = dataLancamento;
+            Name = name;
+            Category = category;
+            Platform = platform;
+            ReleaseDate = releaseDate;
         }
     }
 }

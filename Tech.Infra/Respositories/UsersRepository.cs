@@ -57,5 +57,31 @@ namespace Tech.Infra.Respositories
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Name == name);
         }
+        public async Task AddAsync(UserGame userGame)
+        {
+            await _context.UserGames.AddAsync(userGame);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Game>> GetGamesByUserId(int userId)
+        {
+            return await _context.UserGames
+                .Where(ug => ug.UserId == userId)
+                .Select(ug => ug.Game)
+                .ToListAsync();
+        }
+
+        public async Task RemoveAsync(int userId, int gameId)
+        {
+            var userGame = await _context.UserGames
+                .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
+
+            if (userGame != null)
+            {
+                _context.UserGames.Remove(userGame);
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Tech.Domain.Enums;
 using Tech.Domain.Interfaces.Services;
 using Tech.Domain.Interfaces.Token;
 using Tech.Domain.Requests;
+using Tech.Domain.Requests.Tech.Domain.Requests;
 
 namespace Tech.Api.Controllers
 {
@@ -129,6 +131,62 @@ namespace Tech.Api.Controllers
         public IActionResult ThrowError()
         {
             throw new Exception("Erro de teste para verificar o middleware.");
+        }
+        /// <summary>
+        /// Add a game to the authenticated user's library
+        /// </summary>
+        /// <param name="request">Game ID</param>
+        /// <returns>Success message</returns>
+        /// <response code="200">Game added successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal error</response>
+        [HttpPost("my-games")]
+        [Authorize]
+        public async Task<IActionResult> AddGameToMyLibrary([FromBody] UserGameRequest request)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            await _usersService.AddGameToUser(userId, request.GameId);
+            return Ok(new { message = "Game successfully added to your library." });
+        }
+
+        /// <summary>
+        /// Get games from the authenticated user's library
+        /// </summary>
+        /// <returns>List of games</returns>
+        /// <response code="200">Success</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal error</response>
+        [HttpGet("my-games")]
+        [Authorize]
+        public async Task<IActionResult> GetMyGames()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _usersService.GetUserGames(userId);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Remove a game from a user's library
+        /// </summary>
+        /// <param name="id">User ID</param>
+        /// <param name="gameId">Game ID</param>
+        /// <returns>Success message</returns>
+        /// <response code="200">Game removed successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="500">Internal error</response>
+        [HttpDelete("{id}/games/{gameId}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveGameFromUser(int id, int gameId)
+        {
+            var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            if (currentUserId != id && role != "Admin")
+                return Forbid();
+
+            await _usersService.RemoveGameFromUser(id, gameId);
+            return Ok(new { message = "Game removed from the library." });
         }
     }
 }
