@@ -7,6 +7,8 @@
         public string Plataforma { get; private set; }
         public DateTime DataLancamento { get; private set; }
 
+        public ICollection<UserGame> UserGames { get; set; } = new List<UserGame>();
+
         public Game()
         {
         }

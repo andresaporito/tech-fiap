@@ -12,6 +12,7 @@ namespace Tech.Infra.Context
 
         public DbSet<Users> Users { get; set; }
         public DbSet<Game> Games { get; set; }
+        public DbSet<UserGame> UserGames { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +38,19 @@ namespace Tech.Infra.Context
                     Id = 2
                 }
             );
+
+            modelBuilder.Entity<UserGame>()
+        .HasKey(ug => new { ug.UserId, ug.GameId });
+
+            modelBuilder.Entity<UserGame>()
+                .HasOne(ug => ug.User)
+                .WithMany(u => u.UserGames)
+                .HasForeignKey(ug => ug.UserId);
+
+            modelBuilder.Entity<UserGame>()
+                .HasOne(ug => ug.Game)
+                .WithMany(g => g.UserGames)
+                .HasForeignKey(ug => ug.GameId);
         }
 
     }
