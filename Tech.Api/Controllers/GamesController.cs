@@ -60,8 +60,12 @@ namespace Tech.Api.Controllers
         /// <response code="400">Invalid data</response>
         /// <response code="500">Internal error</response>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddGame([FromBody] GameRequest request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _gameService.AddGame(request);
             return Created("", result);
         }
@@ -76,8 +80,12 @@ namespace Tech.Api.Controllers
         /// <response code="404">Game not found</response>
         /// <response code="500">Internal error</response>
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateGame([FromBody] GameRequest request, [FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var existing = await _gameService.GetId(id);
             if (existing == null)
                 return NotFound();
@@ -95,6 +103,7 @@ namespace Tech.Api.Controllers
         /// <response code="404">Game not found</response>
         /// <response code="500">Internal error</response>
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteGame([FromRoute] int id)
         {
             var existing = await _gameService.GetId(id);
@@ -102,7 +111,7 @@ namespace Tech.Api.Controllers
                 return NotFound();
 
             var deleted = await _gameService.Delete(id);
-            return Ok(deleted);
+            return Ok(new { message = "Game deleted successfully", deleted });
         }
     }
 }

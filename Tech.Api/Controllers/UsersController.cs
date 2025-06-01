@@ -117,7 +117,12 @@ namespace Tech.Api.Controllers
             if (string.IsNullOrEmpty(token))
                 return Unauthorized();
 
-            return Ok(token);
+            return Ok(new
+            {
+                token,
+                expiresIn = 3600,
+                role = "Admin"
+            });
         }
         [HttpGet("test-error")]
         [AllowAnonymous]
