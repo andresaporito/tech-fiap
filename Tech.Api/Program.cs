@@ -6,10 +6,12 @@ using System.Reflection;
 using System.Text;
 using Tech.Domain.Interfaces.Repositories;
 using Tech.Domain.Interfaces.Services;
+using Tech.Domain.Interfaces.Services.Tech.Domain.Interfaces.Repositories;
 using Tech.Domain.Interfaces.Token;
 using Tech.Infra.Context;
 using Tech.Infra.Repositories;
 using Tech.Infra.Respositories;
+using Tech.Infra.Respositories.Tech.Infra.Repositories;
 using Tech.Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +31,7 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserGameRepository, UserGameRepository>();
 
 
 builder.Services.AddAuthentication(x =>

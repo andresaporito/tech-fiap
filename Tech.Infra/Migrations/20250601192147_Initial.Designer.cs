@@ -11,8 +11,8 @@ using Tech.Infra.Context;
 namespace Tech.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250528000931_SeedAdm")]
-    partial class SeedAdm
+    [Migration("20250601192147_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,24 +26,42 @@ namespace Tech.Infra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Categoria")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("DataLancamento")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Nome")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Plataforma")
+                    b.Property<string>("Platform")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("Tech.Domain.Entities.UserGame", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("AcquisitionDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("UserGames");
                 });
 
             modelBuilder.Entity("Tech.Domain.Entities.Users", b =>
@@ -79,7 +97,44 @@ namespace Tech.Infra.Migrations
                             Name = "admin",
                             Password = "123",
                             Permission = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "joao@tech.com",
+                            Name = "joao",
+                            Password = "123",
+                            Permission = 2
                         });
+                });
+
+            modelBuilder.Entity("Tech.Domain.Entities.UserGame", b =>
+                {
+                    b.HasOne("Tech.Domain.Entities.Game", "Game")
+                        .WithMany("UserGames")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tech.Domain.Entities.Users", "User")
+                        .WithMany("UserGames")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Tech.Domain.Entities.Game", b =>
+                {
+                    b.Navigation("UserGames");
+                });
+
+            modelBuilder.Entity("Tech.Domain.Entities.Users", b =>
+                {
+                    b.Navigation("UserGames");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,7 +12,7 @@ namespace Tech.Services.Services
 
         public async Task<GameResponse> AddGame(GameRequest request)
         {
-            var game = new Game(request.Nome, request.Categoria, request.Plataforma, request.DataLancamento);
+            var game = new Game(request.Name, request.Category, request.Platform, request.ReleaseDate);
             await _gameRepository.AddGame(game);
             return GameResponse.FromEntity(game);
         }
@@ -47,7 +47,7 @@ namespace Tech.Services.Services
             if (game == null)
                 throw new KeyNotFoundException($"Game with Id {id} not found.");
 
-            game.Update(request.Nome, request.Categoria, request.Plataforma, request.DataLancamento);
+            game.Update(request.Name, request.Category, request.Platform, request.ReleaseDate);
             await _gameRepository.UpdateGame(game);
             return GameResponse.FromEntity(game);
         }
