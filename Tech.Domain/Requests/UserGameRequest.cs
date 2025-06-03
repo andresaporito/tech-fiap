@@ -4,7 +4,6 @@
     {
         public sealed record UserGameRequest
         {
-            public int UserId { get; set; }
             public int GameId { get; set; }
         }
     }

@@ -32,6 +32,7 @@ namespace Tech.Services.Services
 
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier, findUser.Id.ToString()),
                 new Claim(ClaimTypes.Name, findUser.Name),
                 new Claim(ClaimTypes.Role, findUser.Permission.ToString())
             };
