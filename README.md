@@ -21,8 +21,8 @@ API RESTful desenvolvida em .NET 8 para cadastro e gerenciamento de usuários e 
 ### 1. Pré-requisitos
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
-- [SQL Server LocalDB ou outro SQL compatível]
-- [Visual Studio 2022+ ou VS Code]
+- [Sqlite LocalDB]
+- [Visual Studio 2022]
 
 ### 2. Configuração
 
@@ -77,7 +77,7 @@ https://localhost:5001/swagger/index.html
 - Entity Framework Core
 - SQL Server
 - JWT Authentication
-- Serilog + ILogger
+- ILogger
 - xUnit + Moq + FluentAssertions
 
 ---
@@ -92,10 +92,8 @@ https://localhost:5001/swagger/index.html
 
 ## 📎 Links
 
-- 📁 Repositório: [URL do GitHub]
-- 🎥 Vídeo da Apresentação: [YouTube ou Google Drive]
-- 🧩 Documentação DDD (Event Storming): [Link do Miro]
-- 📄 Relatório: [PDF ou TXT]
+- 📁 Repositório: https://github.com/andresaporito/tech-fiap
+- 🎥 Vídeo da Apresentação: https://youtu.be/aIroCyp0d10
 
 ---
 
