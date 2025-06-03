@@ -11,8 +11,8 @@ using Tech.Infra.Context;
 namespace Tech.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250601192147_Initial")]
-    partial class Initial
+    [Migration("20250603225213_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

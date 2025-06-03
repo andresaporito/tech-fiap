@@ -15,7 +15,7 @@ namespace Tech.Services.Services
 
         public async Task<UsersResponse> AddUsers(NewUsersRequest request)
         {
-            var user = new Users(request.Name, request.Password, request.Email, request.Permission);
+            var user = new Users(request.Name, request.Email, request.Password, request.Permission);
 
             await _usersRepository.AddUsers(user);
 
