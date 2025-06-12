@@ -26,4 +26,4 @@ jobs:
         run: dotnet build Tech.Api/Tech.Api.csproj --no-restore --configuration Release
 
       - name: 🧪 Executar Testes
-        run: dotnet test Tech.Tests/Tech.Tests.csproj --no-build --configuration Release --verbosity normal
+        run: dotnet test Tech.Tests/Tech.Tests.csproj --no-build
