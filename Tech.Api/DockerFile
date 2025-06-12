@@ -1,0 +1,20 @@
+# Etapa 1: build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /app
+
+COPY *.sln .
+COPY Tech.Api/*.csproj ./Tech.Api/
+COPY Tech.Domain/*.csproj ./Tech.Domain/
+COPY Tech.Infra/*.csproj ./Tech.Infra/
+COPY Tech.Services/*.csproj ./Tech.Services/
+RUN dotnet restore
+
+COPY . .
+RUN dotnet publish Tech.Api/Tech.Api.csproj -c Release -o /app/publish
+
+# Etapa 2: runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build /app/publish .
+
+ENTRYPOINT ["dotnet", "Tech.Api.dll"]
