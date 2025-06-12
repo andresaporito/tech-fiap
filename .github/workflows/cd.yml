@@ -1,0 +1,35 @@
+name: CD - Deploy Docker para Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 🐳 Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tech-api:latest .
+
+      - name: 🔐 Login no DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: 📤 Push da imagem para DockerHub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tech-api:latest
+
+      - name: 🔄 Deploy no Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: nome-do-seu-webapp
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/tech-api:latest
