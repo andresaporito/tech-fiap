@@ -1,16 +1,29 @@
-name: Meu Primeiro Workflow no Actions
+name: CI - Build e Testes
 
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-  workflow_dispatch:
 
 jobs:
-  job1:
+  build-test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Run a one-line script
-        run: echo "Olá, turma da disciplina Git Actions."
+      - name: 📦 Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Instalar SDK do .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 📚 Restaurar dependências
+        run: dotnet restore Tech.Api/Tech.Api.csproj
+
+      - name: 🛠️ Build do projeto
+        run: dotnet build Tech.Api/Tech.Api.csproj --no-restore --configuration Release
+
+      - name: 🧪 Executar Testes
+        run: dotnet test Tech.Tests/Tech.Tests.csproj --no-build --configuration Release --verbosity normal
